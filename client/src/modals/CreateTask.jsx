@@ -28,7 +28,10 @@ const CreateTaskPopup = ({ modal, toggle, save }) => {
     formData.append('Name', taskName);
     formData.append('Description', description);
     formData.append('priority', priority);
-    formData.append('Image', selectedImage);
+    if(selectedImage !== null){
+
+      formData.append('Image', selectedImage);
+    }
   
     try {
       const config = {

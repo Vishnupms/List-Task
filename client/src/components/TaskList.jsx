@@ -3,6 +3,8 @@ import CreateTask from '../modals/CreateTask';
 import TaskFilter from './TaskFilter';
 import axios from 'axios';
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -10,8 +12,8 @@ import { Toaster, toast } from "react-hot-toast";
 const TaskList = () => {
   const [modal, setModal] = useState(false);
   const [taskList, setTaskList] = useState([]);
-  const [priorityFilter, setPriorityFilter] = useState('all');
-
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const navigate = useNavigate()
    useEffect(() => {
     fetchData();
   }, []);
@@ -34,11 +36,9 @@ const TaskList = () => {
       throw error;
     }
   };
-  // const updateListArray = (obj, index) => {
-  //   const updatedList = taskList.map((task, i) => (i === index ? obj : task));
-  //   localStorage.setItem('taskList', JSON.stringify(updatedList));
-  //   setTaskList(updatedList);
-  // };
+  const navigateToUpdatePage = (task) => {
+    navigate('/edit', { state: { taskData: task } });
+  };
 
   const toggle = () => {
     setModal(!modal);
@@ -97,7 +97,7 @@ const TaskList = () => {
       <td>
         <i
           className="far fa-edit text-blue-500 cursor-pointer mr-2"
-          onClick={() => setModal(true)}
+          onClick={() => navigateToUpdatePage(task)}
         ></i>
         <i
           className="fas fa-trash-alt text-red-500 cursor-pointer"

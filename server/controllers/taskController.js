@@ -1,7 +1,10 @@
 import moment from "moment/moment.js";
 import TaskData from "../models/table.js";
 import fs from 'fs';
-import { dirname, join } from 'path';
+import { fileURLToPath } from 'url'
+import path, { dirname, join } from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
 export const createTask = async (req, res) => {
@@ -54,7 +57,7 @@ export const deleteTask = async (req, res) => {
     if (taskToDelete.taskimage) {
       // Get the directory containing the current module
       const currentModuleDir = dirname(new URL(import.meta.url).pathname);
-      const imagePath = join(currentModuleDir, '..', 'uploads', taskToDelete.taskimage);
+      const imagePath = path.join(currentModuleDir, '..', 'uploads', taskToDelete.taskimage);
 
       // Check if the file exists before attempting deletion
       if (fs.existsSync(imagePath)) {
@@ -73,6 +76,44 @@ export const deleteTask = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Task deleted successfully' });
   } catch (error) {
     console.error('Error deleting task:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+// Update a task
+export const updateTask = async (req, res) => {
+  const taskId = req.params.taskId; // Get the task id from the URL parameter
+
+  try {
+    // Find the task by id
+    const taskToUpdate = await TaskData.findOne({ where: { id: taskId } });
+
+    if (!taskToUpdate) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Update task data
+    taskToUpdate.taskname = req.body.taskname;
+    taskToUpdate.description = req.body.description;
+    taskToUpdate.priority = req.body.priority;
+
+    if (req.file) {
+      // Delete the old image file (optional)
+      const imagePath = path.join(__dirname, '..', 'uploads', taskToUpdate.taskimage);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+
+      // Save the new image filename
+      taskToUpdate.taskimage = req.file.filename;
+    }
+
+    // Save the updated task data to the database
+    await taskToUpdate.save();
+
+    return res.status(200).json({ success: true, message: 'Task updated successfully' });
+  } catch (error) {
+    console.error('Error updating task:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };

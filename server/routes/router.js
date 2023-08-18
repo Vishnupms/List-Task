@@ -20,6 +20,7 @@ const upload = multer({ storage: storage });
 router.post("/createList", upload.single('Image'),controller.createTask);
 router.get("/getList", controller.getAllTask);
 router.delete('/deleteTask/:taskId', controller.deleteTask);
+router.put('/updateTask/:taskId', upload.single('image'), controller.updateTask);
 
 
 export default router;
