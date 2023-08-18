@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const createTask = async (req, res) => {
   const { Name, Description, priority } = req.body;
-  const uploadedImage = req.file; // Uploaded image file
+  const uploadedImage = req.file; 
 
   if (!Name || !Description || !priority || !uploadedImage) {
     return res.status(422).json({ status: 422, message: "Fill all details" });
@@ -20,13 +20,13 @@ export const createTask = async (req, res) => {
     const newTask = await TaskData.create({
       taskname: Name,
       description: Description,
-      taskimage: uploadedImage.filename, // Store the filename or path
+      taskimage: uploadedImage.filename, 
       priority: priority,
       date: date,
     });
 
     console.log("Data added successfully:", newTask.toJSON());
-    return res.status(201).json({ status: 201, message:"Task created successfully" });
+    return res.status(201).json({ success:true, message:"Task created successfully" });
   } catch (error) {
     console.log("Error:", error);
     return res.status(500).json({ status: 500, message: "Internal Server Error" });
@@ -44,10 +44,9 @@ export const getAllTask = async (req, res) => {
 }
 
 export const deleteTask = async (req, res) => {
-  const taskId = req.params.taskId; // Get the task id from the URL parameter
+  const taskId = req.params.taskId; 
 
   try {
-    // Find the task by id
     const taskToDelete = await TaskData.findOne({ where: { id: taskId } });
 
     if (!taskToDelete) {
@@ -55,14 +54,12 @@ export const deleteTask = async (req, res) => {
     }
 
     if (taskToDelete.taskimage) {
-      // Get the directory containing the current module
       const currentModuleDir = dirname(new URL(import.meta.url).pathname);
       const imagePath = path.join(currentModuleDir, '..', 'uploads', taskToDelete.taskimage);
 
-      // Check if the file exists before attempting deletion
       if (fs.existsSync(imagePath)) {
         try {
-          fs.unlinkSync(imagePath); // Delete the file
+          fs.unlinkSync(imagePath); 
           console.log(`Image deleted: ${imagePath}`);
         } catch (error) {
           console.error(`Error deleting image: ${imagePath}`, error);
@@ -70,7 +67,6 @@ export const deleteTask = async (req, res) => {
       }
     }
 
-    // Delete the task from the database
     await taskToDelete.destroy();
 
     return res.status(200).json({ success: true, message: 'Task deleted successfully' });
@@ -82,33 +78,30 @@ export const deleteTask = async (req, res) => {
 
 // Update a task
 export const updateTask = async (req, res) => {
-  const taskId = req.params.taskId; // Get the task id from the URL parameter
+  const taskId = req.params.taskId; 
 
   try {
-    // Find the task by id
+ 
     const taskToUpdate = await TaskData.findOne({ where: { id: taskId } });
 
     if (!taskToUpdate) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
-    // Update task data
+
     taskToUpdate.taskname = req.body.taskname;
     taskToUpdate.description = req.body.description;
     taskToUpdate.priority = req.body.priority;
 
     if (req.file) {
-      // Delete the old image file (optional)
       const imagePath = path.join(__dirname, '..', 'uploads', taskToUpdate.taskimage);
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
       }
 
-      // Save the new image filename
       taskToUpdate.taskimage = req.file.filename;
     }
 
-    // Save the updated task data to the database
     await taskToUpdate.save();
 
     return res.status(200).json({ success: true, message: 'Task updated successfully' });

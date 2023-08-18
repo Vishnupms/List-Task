@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import CreateTask from '../modals/CreateTask';
 import TaskFilter from './TaskFilter';
 import axios from 'axios';
 import { Toaster, toast } from "react-hot-toast";
@@ -10,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 const TaskList = () => {
-  const [modal, setModal] = useState(false);
   const [taskList, setTaskList] = useState([]);
   const [priorityFilter, setPriorityFilter] = useState('all')
   const navigate = useNavigate()
@@ -40,16 +38,6 @@ const TaskList = () => {
     navigate('/edit', { state: { taskData: task } });
   };
 
-  const toggle = () => {
-    setModal(!modal);
-  };
-
-  const saveTask = (responseData) => {
-    const updatedList = { response: responseData };
-    console.log(updatedList,"cscccssvsc")
-    toast.success(updatedList.message)
-    setModal(false);
-  };
   
 
   const filteredTasks =
@@ -65,7 +53,7 @@ const TaskList = () => {
         <h3 className="text-2xl font-semibold mb-4">Todo List</h3>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          onClick={toggle}
+          onClick={()=>navigate("/create")}
         >
           Create Task
         </button>
@@ -81,19 +69,21 @@ const TaskList = () => {
               <th className="py-2">Task</th>
               <th className="py-2">Description</th>
               <th className="py-2">Image</th>
+              <th className="py-2">Created At</th>
               <th className="py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
           {filteredTasks.map((task, index) => (
-    <tr className="hover:bg-gray-200 cursor-pointer" key={index}>
-      <td>{task.taskname}</td>
+    <tr className="hover:bg-gray-200" key={index}>
+      <td className="hover:text-blue-600 cursor-pointer" onClick={()=>navigate("/show",{ state: { taskData: task } })}>{task.taskname}</td>
       <td>{task.description}</td>
       <td>
         {task.taskimage && (
           <img src={`http://localhost:8000/uploads/${task.taskimage}`} alt="Task" className="w-16 h-16" />
         )}
       </td>
+      <td>{new Date(task.createdAt).toLocaleString()}</td>
       <td>
         <i
           className="far fa-edit text-blue-500 cursor-pointer mr-2"
@@ -109,7 +99,6 @@ const TaskList = () => {
 </tbody>
         </table>
       </div>
-      <CreateTask toggle={toggle} modal={modal} save={saveTask} />
     </div>
     </>
   );
