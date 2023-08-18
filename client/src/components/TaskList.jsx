@@ -17,7 +17,7 @@ const TaskList = () => {
   }, []);
    const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/getList'); // Change the URL to your backend API endpoint
+      const response = await axios.get('http://localhost:8000/api/getTask'); // Change the URL to your backend API endpoint
       setTaskList(response.data); // Update the taskList state with the fetched data
       console.log(response.data,"csjcbjsb c")
     } catch (error) {

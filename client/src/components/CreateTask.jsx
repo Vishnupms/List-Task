@@ -43,7 +43,7 @@ const CreateTask = () => {
         },
       };
 
-      const res = await axios.post('http://localhost:8000/api/createList', formData, config);
+      const res = await axios.post('http://localhost:8000/api/createTask', formData, config);
 
    
       console.log(res.data)
