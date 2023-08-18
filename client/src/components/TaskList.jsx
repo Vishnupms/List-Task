@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import CreateTask from '../modals/CreateTask';
 import TaskFilter from './TaskFilter';
+import axios from 'axios';
+import { Toaster, toast } from "react-hot-toast";
 
 
 
@@ -10,10 +12,27 @@ const TaskList = () => {
   const [taskList, setTaskList] = useState([]);
   const [priorityFilter, setPriorityFilter] = useState('all');
 
+   useEffect(() => {
+    fetchData();
+  }, []);
+   const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/getList'); // Change the URL to your backend API endpoint
+      setTaskList(response.data); // Update the taskList state with the fetched data
+      console.log(response.data,"csjcbjsb c")
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
-  const deleteTask = (index) => {
-    const updatedList = taskList.filter((_, i) => i !== index);
-    setTaskList(updatedList);
+  const deleteTask = async (taskId) => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/api/deleteTask/${taskId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
   };
   // const updateListArray = (obj, index) => {
   //   const updatedList = taskList.map((task, i) => (i === index ? obj : task));
@@ -25,11 +44,13 @@ const TaskList = () => {
     setModal(!modal);
   };
 
-  const saveTask = (taskObj) => {
-    const updatedList = [...taskList, taskObj];
-    setTaskList(updatedList);
+  const saveTask = (responseData) => {
+    const updatedList = { response: responseData };
+    console.log(updatedList,"cscccssvsc")
+    toast.success(updatedList.message)
     setModal(false);
   };
+  
 
   const filteredTasks =
     priorityFilter === 'all'
@@ -37,6 +58,8 @@ const TaskList = () => {
       : taskList.filter((task) => task.priority === priorityFilter)
 
   return (
+    <>
+    <Toaster position="top-center"></Toaster>
     <div className="container mx-auto p-4">
       <div className="header text-center">
         <h3 className="text-2xl font-semibold mb-4">Todo List</h3>
@@ -62,14 +85,14 @@ const TaskList = () => {
             </tr>
           </thead>
           <tbody>
-  {filteredTasks.map((task, index) => (
+          {filteredTasks.map((task, index) => (
     <tr className="hover:bg-gray-200 cursor-pointer" key={index}>
-      <td>{task.Name}</td>
-      <td>{task.Description}</td>
+      <td>{task.taskname}</td>
+      <td>{task.description}</td>
       <td>
-      {task.Image && (
-                    <img src={URL.createObjectURL(task.Image)} alt="Task" className="w-16 h-16" />
-                  )}
+        {task.taskimage && (
+          <img src={`http://localhost:8000/uploads/${task.taskimage}`} alt="Task" className="w-16 h-16" />
+        )}
       </td>
       <td>
         <i
@@ -78,7 +101,7 @@ const TaskList = () => {
         ></i>
         <i
           className="fas fa-trash-alt text-red-500 cursor-pointer"
-          onClick={() => deleteTask(index)}
+          onClick={() => deleteTask(task.id)}
         ></i>
       </td>
     </tr>
@@ -88,6 +111,7 @@ const TaskList = () => {
       </div>
       <CreateTask toggle={toggle} modal={modal} save={saveTask} />
     </div>
+    </>
   );
 };
 

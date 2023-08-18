@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-
+import axios from 'axios';
 const CreateTaskPopup = ({ modal, toggle, save }) => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
@@ -21,15 +21,32 @@ const CreateTaskPopup = ({ modal, toggle, save }) => {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    let taskObj = {
-      Name: taskName,
-      Description: description,
-      priority: priority,
-      Image: selectedImage, // You can use this to pass the file to your save function
-    };
-    save(taskObj);
+  
+    const formData = new FormData();
+    formData.append('Name', taskName);
+    formData.append('Description', description);
+    formData.append('priority', priority);
+    formData.append('Image', selectedImage);
+  
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+  
+      const res = await axios.post("http://localhost:8000/api/createList", formData, config);
+  
+      // Call the save function and pass both formData and res.data
+      console.log(res.data)
+      save(res.data);
+  
+    
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (

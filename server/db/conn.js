@@ -1,17 +1,19 @@
-import mysql from 'mysql2'
+import Sequelize from 'sequelize';
 
-
-const conn = mysql.createConnection({
-    user:"root",
-    host:"localhost",
-    password:"Vishnu123#",
-    database:"task-list"
+const conn = new Sequelize('tasklist', 'root', 'Vishnu123#', {
+  host: 'localhost',
+  dialect: 'mysql',
+  logging: false
 });
 
-conn.connect((error)=>{
-    if(error) throw error
-    console.log("connected !")
-})
+conn
+  .authenticate()
+  .then(() => {
+    console.log('Database connection has been established successfully.');
+  })
+  .catch((error) => {
+    console.error('Unable to connect to the database:', error);
+  });
 
-
-export default conn
+  
+export default conn;
