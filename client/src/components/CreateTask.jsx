@@ -49,7 +49,9 @@ const CreateTask = () => {
       console.log(res.data)
       if(res.data.success){
           toast.success(res.data.message)
-          navigate("/")
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
       }
       else{
         toast.error("something went wrong")
