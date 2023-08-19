@@ -4,10 +4,6 @@ import axios from 'axios';
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
 
-
-
-
-
 const TaskList = () => {
   const [taskList, setTaskList] = useState([]);
   const [priorityFilter, setPriorityFilter] = useState('all')
@@ -17,8 +13,8 @@ const TaskList = () => {
   }, []);
    const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/getTask'); // Change the URL to your backend API endpoint
-      setTaskList(response.data); // Update the taskList state with the fetched data
+      const response = await axios.get('http://localhost:8000/api/getTask'); 
+      setTaskList(response.data);
       console.log(response.data,"csjcbjsb c")
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -27,11 +23,16 @@ const TaskList = () => {
 
   const deleteTask = async (taskId) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/api/deleteTask/${taskId}`);
-      return response.data;
+      const confirmed = window.confirm('Are you sure you want to delete this task?');
+      if (confirmed) {
+        const response = await axios.delete(`http://localhost:8000/api/deleteTask/${taskId}`);
+        console.log(response.data)
+        toast.success(response.data.message)
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error deleting task:', error);
-      throw error;
+     
     }
   };
   const navigateToUpdatePage = (task) => {
@@ -50,7 +51,7 @@ const TaskList = () => {
     <Toaster position="top-center"></Toaster>
     <div className="container mx-auto p-4">
       <div className="header text-center">
-        <h3 className="text-2xl font-semibold mb-4">Todo List</h3>
+        <h3 className="text-2xl font-semibold mb-4">Task Manager</h3>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           onClick={()=>navigate("/create")}
@@ -80,7 +81,7 @@ const TaskList = () => {
       <td>{task.description}</td>
       <td>
         {task.taskimage && (
-          <img src={`http://localhost:8000/uploads/${task.taskimage}`} alt="Task" className="w-16 h-16" />
+          <img src={`http://localhost:8000/uploads/${task.taskimage}`} alt="Task" className="w-16 h-16 cursor-pointer" onClick={()=>navigate("/show",{ state: { taskData: task } })}/>
         )}
       </td>
       <td>{new Date(task.date).toLocaleString()}</td>

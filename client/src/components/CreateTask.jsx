@@ -51,7 +51,7 @@ const CreateTask = () => {
           toast.success(res.data.message)
           setTimeout(() => {
             navigate("/");
-          }, 2000);
+          }, 1500);
       }
       else{
         toast.error("something went wrong")
