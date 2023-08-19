@@ -1,19 +1,17 @@
-import Sequelize from 'sequelize';
+import mysql from 'mysql2/promise';
 
-const conn = new Sequelize('tasklist', 'root', 'Vishnu123#', {
+const conn = await mysql.createConnection({
   host: 'localhost',
-  dialect: 'mysql',
-  logging: false
+  user: 'root',
+  password: 'Vishnu123#',
+  database: 'listtask'
 });
 
-conn
-  .authenticate()
-  .then(() => {
-    console.log('Database connection has been established successfully.');
-  })
-  .catch((error) => {
-    console.error('Unable to connect to the database:', error);
-  });
+try {
+  await conn.execute('SELECT 1'); // Test the connection
+  console.log('Database connection has been established successfully.');
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
 
-  
 export default conn;

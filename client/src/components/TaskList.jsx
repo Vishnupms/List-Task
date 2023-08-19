@@ -83,7 +83,7 @@ const TaskList = () => {
           <img src={`http://localhost:8000/uploads/${task.taskimage}`} alt="Task" className="w-16 h-16" />
         )}
       </td>
-      <td>{new Date(task.createdAt).toLocaleString()}</td>
+      <td>{new Date(task.date).toLocaleString()}</td>
       <td>
         <i
           className="far fa-edit text-blue-500 cursor-pointer mr-2"
