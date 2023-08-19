@@ -64,7 +64,6 @@ const CreateTask = () => {
   return (
     <div>
         <Toaster position="top-center"></Toaster>
-      {/* Include your Navbar or layout component here */}
       <div className="flex justify-center items-center h-screen">
         <div className="bg-white p-6 rounded-lg shadow-md w-96">
           <h2 className="text-2xl font-semibold mb-4">Create Task</h2>

@@ -44,10 +44,10 @@ formData.append('image', selectedImage);
       setTimeout(() => {
         navigate("/");
       }, 2000);
-      // Handle success, navigate back to the task list or show a success message
+ 
     } catch (error) {
       console.error('Error updating task:', error);
-      // Handle error, show an error message
+   
     }
   };
 

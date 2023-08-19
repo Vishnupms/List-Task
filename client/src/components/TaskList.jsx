@@ -49,7 +49,7 @@ const TaskList = () => {
   return (
     <>
     <Toaster position="top-center"></Toaster>
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 bg">
       <div className="header text-center">
         <h3 className="text-2xl font-semibold mb-4">Task Manager</h3>
         <button
