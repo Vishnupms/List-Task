@@ -11,7 +11,7 @@ Clone the repository:
 
 git clone https://github.com/Vishnupms/List-Task.git
 
-cd Google-Custom-Search-API
+cd List-Task
 
 * Installing Front End
 
